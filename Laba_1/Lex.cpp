@@ -123,6 +123,8 @@ namespace Lex {
 		unsigned char* L = new unsigned char[2]{ "L" };
 		unsigned char* bufL = new unsigned char[TI_STR_MAXSIZE];
 		char* charCountLit = new char[10]{ "" };
+		unsigned char* nameLiteral = new unsigned char[TI_STR_MAXSIZE] { "" };
+
 
 		while (word[i] != NULL) {
 			indexLex++;
@@ -264,8 +266,40 @@ namespace Lex {
 				IT::Add(idtable, entryIT);
 				continue;
 			}
-		}
 
+			regex rlitSTR("'(.*)'");// Литерал строки
+			if (regex_match(Word.c_str(), result, rlitSTR)) {
+				
+				int length = _mbslen(word[i]);// Избавляемся от ковычек
+				for (int k = 0; k < length; k++)
+					word[i][k] = word[i][k + 1];
+				word[i][length - 2] = 0;
+
+				for (int k = 0; k < idtable.size; k++)// Ищем значение в таблице индентификаторов
+				{
+					if (!(_mbscmp(idtable.table[k].value.vstr.str, word[i])))//Если нашли то дабавляем в таблицу лексем
+					{
+						findSameID = true;
+						LT::Entry entryLT = writeEntry(entryLT, LEX_LITERAL, k, line);
+						LT::Add(lextable, entryLT);
+						break;
+					}
+					if (findSameID) continue;
+					LT::Entry entryLT = LT::writeEntry(entryLT, LEX_LITERAL, indexID++, line);//Добавляем в таблицу лексем
+					LT::Add(lextable, entryLT);
+					entryIT.iddatatype = IT::STR;// Тип данных
+					entryIT.idtype = IT::L;// Тип индитификатора
+
+					entryIT.value.vstr.len = length-2;
+					_mbscpy(entryIT.value.vstr.str, word[i]); // Значение
+					entryIT.idxfirstLE = indexLex;// Индекс первой лексемы
+					_itoa_s(countLit++, charCountLit, sizeof(char) * 10, 10);
+					_mbscpy(bufL, L);
+					nameLiteral = _mbscat(bufL, (unsigned char*)charCountLit);
+					_mbscpy(entryIT.id, nameLiteral);
+					IT::Add(idtable, entryIT);
+				}
+			}
 		lex.idtable = idtable;
 		lex.lextable = lextable;
 		return lex;
