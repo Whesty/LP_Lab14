@@ -1,4 +1,5 @@
 #include "IT.h"
+#include "Error.h"
 namespace IT {
 	IdTable Create(int size) {
 		if (size > TI_MAXSIZE) throw ERROR_THROW(105);

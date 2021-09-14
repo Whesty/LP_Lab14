@@ -1,7 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "stdafx.h"
 #include <regex>
-//#include "lex.h"
+#include "Lex.h"
 namespace Lex {
 	unsigned char** separat(In::IN in) {
 		int size = 0;
@@ -258,7 +257,7 @@ namespace Lex {
 				entryIT.idtype = IT::L;// Тип индитификатора
 				entryIT.value.vint = value; // Значение
 				entryIT.idxfirstLE = indexLex;// Индекс первой лексемы
-				_itoa_s(countLit++, charCountLit, sizeof(char) * 10, 10);// преращение строки в число
+				_itoa_s(countLit++, charCountLit, sizeof(char) * 10, 10);// Создание имени литерала ("L<порядковый номер литерала>")
 				_mbscpy(bufL, L);
 				word[i] = _mbscat(bufL, (unsigned char*)charCountLit);
 				_mbscpy(entryIT.id, word[i]);
@@ -267,8 +266,8 @@ namespace Lex {
 			}
 		}
 
-		//lex.idtable = idtable;
-		//lex.lextable = lextable;
+		lex.idtable = idtable;
+		lex.lextable = lextable;
 		return lex;
 	}
 	// Создание имени лексемы типа [Размер лексемы]Значение

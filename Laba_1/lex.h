@@ -1,5 +1,4 @@
 #pragma once
-//#include "IT.h"
 #include "stdafx.h"
 #define maxsize 10000
 #define maxword 10000

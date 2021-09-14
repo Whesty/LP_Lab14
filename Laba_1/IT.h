@@ -1,14 +1,10 @@
 #pragma once
-#pragma once
 #define ID_MAXSIZE		10			// максимальное количество символов в идентификаторе
 #define TI_MAXSIZE		4096		// максимальное количество строк в таблице идентификаторов
 #define TI_INT_DEFAULT	0x00000000	// значение по умолчанию для типа integer
 #define TI_STR_DEFAULT	0x00		// значение по умолчанию для типа string
 #define TI_NULLIDX		0xffffffff	// нет элкмента таблицы идентификаторов
 #define TI_STR_MAXSIZE	255			// 
-#include "stdafx.h"
-#pragma once
-#include "stdafx.h"
 namespace IT			// таблица идентификаторов
 {
 	enum IDDATATYPE { INT = 1, STR = 2 };			// типы данных идентификаторов: integer, string

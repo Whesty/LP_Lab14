@@ -24,7 +24,6 @@
 #define LEX_OPERATOR	'v'	// лексема для операторов
 #define LEX_EQUAL		'='
 
-
 namespace LT		// таблица лексем
 {
 	struct Entry	// строка таблицы лексем
