@@ -13,7 +13,8 @@ int wmain(int argc, wchar_t* argv[]) {
 		Log::WriteParm(log, parm);
 		In::IN in = In::getin(parm.in);
 		Log::WriteIn(log, in);
-		Lex::lexAnaliz(log, in);
+		Lex::LEX lex = Lex::lexAnaliz(log, in);
+		LT::showTable(lex.lextable, parm);
 		Log::Close(log);
 		return 0;
 	}
