@@ -14,6 +14,7 @@ int wmain(int argc, wchar_t* argv[]) {
 		In::IN in = In::getin(parm.in);
 		Log::WriteIn(log, in);
 		Lex::LEX lex = Lex::lexAnaliz(log, in);
+		
 		LT::showTable(lex.lextable, parm);
 		Log::Close(log);
 		return 0;

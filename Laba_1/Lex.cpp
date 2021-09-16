@@ -134,15 +134,12 @@ namespace Lex {
 		unsigned char* bufL = new unsigned char[TI_STR_MAXSIZE];
 		char* charCountLit = new char[10]{ "" };
 		unsigned char* nameLiteral = new unsigned char[TI_STR_MAXSIZE] { "" };
-
+		
 
 		for (i = 0; word[i] != NULL; indexLex++, i++) {
 			
-			string Word = (char*)word[i];
-			cmatch result;
-			regex rstring("string");
-			//cout << Word << word[i] << i << endl;
-
+		
+			bool findSameID = false;
 			FST::FST fstDeclare(word[i], FST_DECLARE);
 			if (FST::execute(fstDeclare))
 			{
@@ -219,15 +216,6 @@ namespace Lex {
 						findFunc = false;
 						continue;
 					}
-					_mbscpy(buferRegionPrefix, RegionPrefix); //Поиск индентификатора с префиксом(название функции)
-					word[i] = _mbscat(buferRegionPrefix, word[i]);
-					idx = IT::IsId(idtable, word[i]);
-					if (idx != TI_NULLIDX)
-					{
-						LT::Entry entryLT = writeEntry(entryLT, LEX_ID, idx, line);
-						LT::Add(lextable, entryLT);
-						continue;
-					}
 				}
 				else {// Если это не индентификатор функции 
 					int idx = IT::IsId(idtable, word[i]);// Ищем индентификатор в таблице индентификаторов
@@ -235,6 +223,15 @@ namespace Lex {
 						LT::Entry entryLT = LT::writeEntry(entryLT, LEX_ID, idx, line);
 						LT::Add(lextable, entryLT);
 						findFunc = false;
+						continue;
+					}
+					_mbscpy(buferRegionPrefix, RegionPrefix); //Поиск индентификатора с префиксом(название функции)
+					word[i] = _mbscat(buferRegionPrefix, word[i]);
+					idx = IT::IsId(idtable, word[i]);
+					if (idx != TI_NULLIDX)
+					{
+						LT::Entry entryLT = writeEntry(entryLT, LEX_ID, idx, line);
+						LT::Add(lextable, entryLT);
 						continue;
 					}
 				}
@@ -271,7 +268,7 @@ namespace Lex {
 			if (FST::execute(fstLiteralInt)) {
 				int value = atoi((char*)word[i]);
 				for (int k = 0; k < idtable.size; k++) {//Если значение было заданно раньше то добавляем её из таблицы индитифакоторов в таблицу лексем
-					if (idtable.table[k].value.vint == value && idtable.table[k].iddatatype == IT::INT) {
+					if (idtable.table[k].value.vint == value && idtable.table[k].idtype == IT::L) {
 						LT::Entry entryLT = LT::writeEntry(entryLT, LEX_LITERAL, k, line);
 						LT::Add(lextable, entryLT);
 						findSameID = true;
@@ -279,7 +276,7 @@ namespace Lex {
 					}
 				}
 				if (findSameID) continue;
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_LITERAL, indexID++, line);//Добавляем в таблицу лексем
+				LT::Entry entryLT = writeEntry(entryLT, LEX_LITERAL, indexID++, line);//Добавляем в таблицу лексем
 				LT::Add(lextable, entryLT);
 				entryIT.iddatatype = IT::INT;// Тип данных
 				entryIT.idtype = IT::L;// Тип индитификатора
@@ -413,6 +410,7 @@ namespace Lex {
 		return lex;
 	}
 
+
 	bool checkBrace(unsigned char** word, int k)
 	{
 		while (word[k][0] == IN_CODE_DELIMETR)
@@ -424,6 +422,7 @@ namespace Lex {
 		else
 			return 0;
 	}
+	
 }
 
 // Постройка вырожений с помощью библиотеки

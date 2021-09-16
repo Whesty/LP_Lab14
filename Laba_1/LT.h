@@ -64,4 +64,5 @@ namespace LT		// таблица лексем
 	);
 
 	void showTable(LexTable lextable, Parm::PARM parm);	// вывод таблицы лексем
+
 };

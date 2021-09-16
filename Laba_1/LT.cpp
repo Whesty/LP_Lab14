@@ -35,7 +35,7 @@ namespace LT
 	void showTable(LexTable lextable, Parm::PARM parm) {
 
 		std::fstream fout;
-		fout.open(parm.out, std::ios::out);//ios::app - дописыввать в конец файла
+		fout.open(parm.out, std::ios::app);//ios::app - дописыввать в конец файла
 		if (!fout.is_open())
 			throw ERROR_THROW(110);
 		fout << "01 ";
@@ -45,8 +45,8 @@ namespace LT
 		{
 			if (lextable.table[i].sn != number && lextable.table[i].sn != -1)   //нумерация строк
 			{
-				//while (lextable.table[i].sn - number > 1)	// пока не дойдём до последней строки
-				//	number++;
+			//	while (lextable.table[i].sn - number > 1)	// пока не дойдём до последней строки
+			//		number++;
 				if (number < 9)
 					fout << std::endl << '0' << lextable.table[i].sn << ' ';
 				else
