@@ -12,4 +12,5 @@ namespace Lex {
 	};
 
 	LEX lexAnaliz(Log::LOG log, In::IN in);
+	bool checkBrace(unsigned char** word, int k);
 }

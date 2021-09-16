@@ -142,59 +142,74 @@ namespace Lex {
 			cmatch result;
 			regex rstring("string");
 			//cout << Word << word[i] << i << endl;
-			if (regex_match(Word.c_str(), result, rstring)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_STRING, LT_TI_NULLIDX, line);
+
+			FST::FST fstDeclare(word[i], FST_DECLARE);
+			if (FST::execute(fstDeclare))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_DECLARE, LT_TI_NULLIDX, line);
+
 				LT::Add(lextable, entryLT);
+				continue;
+			}
+			FST::FST fstTypeInteger(word[i], FST_INTEGER);
+			if (FST::execute(fstTypeInteger))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_INTEGER, LT_TI_NULLIDX, line);
+				LT::Add(lextable, entryLT);
+
+				entryIT.iddatatype = IT::INT;
+				continue;
+			}
+			FST::FST fstTypeString(word[i], FST_STRING);
+			if (FST::execute(fstTypeString))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_STRING, LT_TI_NULLIDX, line);
+				LT::Add(lextable, entryLT);
+
 				entryIT.iddatatype = IT::STR;
 				_mbscpy(entryIT.value.vstr.str, emptystr);
 				continue;
 			}
-			regex rinteger("integer");
-			if (regex_match(Word.c_str(), result, rinteger)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_INTEGER, LT_TI_NULLIDX, line);
+			FST::FST fstFunction(word[i], FST_FUNCTION);
+			if (FST::execute(fstFunction))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_FUNCTION, LT_TI_NULLIDX, line);
 				LT::Add(lextable, entryLT);
-				entryIT.iddatatype = IT::INT;
-				continue;
-			}
-			regex rdecler("declare");
-			if (regex_match(Word.c_str(), result, rdecler)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_DECLARE, LT_TI_NULLIDX, line);
-				LT::Add(lextable, entryLT);
-				continue;
-			}
 
-			regex rfunction("function");
-			if (regex_match(Word.c_str(), result, rfunction)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_FUNCTION, LT_TI_NULLIDX, line);
-				LT::Add(lextable, entryLT);
 				entryIT.idtype = IT::F;
 				findFunc = true;
 				continue;
 			}
+			FST::FST fstReturn(word[i], FST_RETURN);
+			if (FST::execute(fstReturn))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_RETURN, LT_TI_NULLIDX, line);
+				LT::Add(lextable, entryLT);
+				continue;
+			}
+			FST::FST fstPrint(word[i], FST_PRINT);
+			if (FST::execute(fstPrint))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_PRINT, LT_TI_NULLIDX, line);
+				LT::Add(lextable, entryLT);
+				continue;
+			}
 
-			regex rreturn("return");
-			if (regex_match(Word.c_str(), result, rreturn)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_RETURN, LT_TI_NULLIDX, line);
+			FST::FST fstMain(word[i], FST_MAIN);
+			if (FST::execute(fstMain))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_MAIN, LT_TI_NULLIDX, line);
 				LT::Add(lextable, entryLT);
-				continue;
-			}
-			regex rprint("print");
-			if (regex_match(Word.c_str(), result, rprint)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_PRINT, LT_TI_NULLIDX, line);
-				LT::Add(lextable, entryLT);
-				continue;
-			}
-			regex rmain("main");
-			if (regex_match(Word.c_str(), result, rmain)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_MAIN, LT_TI_NULLIDX, line);
-				LT::Add(lextable, entryLT);
-				_mbscpy(pastRegionPrefix, RegionPrefix);// Вхождение в функцию main значит все заднные в ней индентификаторы должны иметь префикс
+
+				// Вхождение в функцию main значит все заднные в ней индентификаторы должны иметь префикс
+				_mbscpy(pastRegionPrefix, RegionPrefix);
 				_mbscpy(RegionPrefix, word[i]);
 				continue;
 			}
-
-			regex rindentif("([a-z_]*)");// Если это индитификатор (любое слово состоящие из букс цифр и знака подчеркивание)
-			if (regex_match(Word.c_str(), rindentif)) {
+			
+			// Если это индитификатор (любое слово состоящие из букс цифр и знака подчеркивание)
+			FST::FST fstIdentif(word[i], FST_ID);
+			if (FST::execute(fstIdentif)) {
 
 				if (findFunc) {// Если до этого была лексема функции то это индитификатор функции
 					int idx = IT::IsId(idtable, word[i]);// Поиск функции в таблицы индентификаторов
@@ -251,8 +266,9 @@ namespace Lex {
 				continue;
 			}
 
-			regex rlitINT("\\d*");// Литерал число (лексема состоящая только из чисел)
-			if (regex_match(Word.c_str(), result, rlitINT)) {
+			// Литерал число (лексема состоящая только из чисел)
+			FST::FST fstLiteralInt(word[i], FST_INTLIT);
+			if (FST::execute(fstLiteralInt)) {
 				int value = atoi((char*)word[i]);
 				for (int k = 0; k < idtable.size; k++) {//Если значение было заданно раньше то добавляем её из таблицы индитифакоторов в таблицу лексем
 					if (idtable.table[k].value.vint == value && idtable.table[k].iddatatype == IT::INT) {
@@ -277,8 +293,9 @@ namespace Lex {
 				continue;
 			}
 
-			regex rlitSTR("'(.*)'");// Литерал строки
-			if (regex_match(Word.c_str(), result, rlitSTR)) {
+			// Литерал строки
+			FST::FST fstLiteralString(word[i], FST_STRLIT);
+			if (FST::execute(fstLiteralString)) {
 
 				int length = _mbslen(word[i]);// Избавляемся от ковычек
 				for (int k = 0; k < length; k++)
@@ -312,61 +329,72 @@ namespace Lex {
 				IT::Add(idtable, entryIT);
 				continue;
 			}
-			regex rsemicolon(";");
-			if (regex_match(Word.c_str(), result, rsemicolon)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_SEMICOLON, LT_TI_NULLIDX, line);
-				LT::Add(lextable, entryLT);
-				continue;
-			}
-			regex rComma(",");
-			if (regex_match(Word.c_str(), rComma)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_COMMA, LT_TI_NULLIDX, line);
-				LT::Add(lextable, entryLT);
-				continue;
-			}
-			regex rLeftBrace("\\{");
-			if (regex_match(Word.c_str(), result, rLeftBrace)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_LEFTBRACE, LT_TI_NULLIDX, line);
-				LT::Add(lextable, entryLT);
-				continue;
-			}
+			FST::FST fstOperator(word[i], FST_OPERATOR);
+			if (FST::execute(fstOperator))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_OPERATOR, indexID++, line);
 
-			regex rRigthBrace("\\}");
-			if (regex_match(Word.c_str(), result, rRigthBrace)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_BRACELET, LT_TI_NULLIDX, line);
 				LT::Add(lextable, entryLT);
-				continue;
-			}
-
-			regex rLeftThesis("\\(");
-			if (regex_match(Word.c_str(), result, rLeftThesis)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_LEFTTHESIS, LT_TI_NULLIDX, line);
-				LT::Add(lextable, entryLT);
-				continue;
-			}
-
-			regex rThesiset("\\)");
-			if (regex_match(Word.c_str(), result, rThesiset)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_RIGHTTHESIS, LT_TI_NULLIDX, line);
-				LT::Add(lextable, entryLT);
-				continue;
-			}
-
-			regex rEqual("=");
-			if (regex_match(Word.c_str(), result, rEqual)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_EQUAL, LT_TI_NULLIDX, line);
-				LT::Add(lextable, entryLT);
-				continue;
-			}
-			regex rOPERATOR("[*+-/]");
-			if (regex_match(Word.c_str(), result, rOPERATOR)) {
-				LT::Entry entryLT = LT::writeEntry(entryLT, LEX_OPERATOR, indexID++, line);
-				LT::Add(lextable, entryLT);
-
 				_mbscpy(entryIT.id, word[i]);
 				entryIT.idxfirstLE = indexLex;
 				entryIT.idtype = IT::OP;
 				IT::Add(idtable, entryIT);
+				continue;
+			}
+			FST::FST fstSemicolon(word[i], FST_SEMICOLON);
+			if (FST::execute(fstSemicolon))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_SEMICOLON, LT_TI_NULLIDX, line);
+				LT::Add(lextable, entryLT);
+				continue;
+			}
+			FST::FST fstComma(word[i], FST_COMMA);
+			if (FST::execute(fstComma))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_COMMA, LT_TI_NULLIDX, line);
+
+				LT::Add(lextable, entryLT);
+				continue;
+			}
+			FST::FST fstLeftBrace(word[i], FST_LEFTBRACE);
+			if (FST::execute(fstLeftBrace))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_LEFTBRACE, LT_TI_NULLIDX, line);
+				LT::Add(lextable, entryLT);
+				continue;
+			}
+			FST::FST fstRightBrace(word[i], FST_BRACELET);
+			if (FST::execute(fstRightBrace))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_BRACELET, LT_TI_NULLIDX, line);
+				LT::Add(lextable, entryLT);
+				continue;
+			}
+			FST::FST fstLeftThesis(word[i], FST_LEFTTHESIS);
+			if (FST::execute(fstLeftThesis))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_LEFTTHESIS, LT_TI_NULLIDX, line);
+				LT::Add(lextable, entryLT);
+
+				continue;
+			}
+			FST::FST fstRightThesis(word[i], FST_RIGHTTHESIS);
+			if (FST::execute(fstRightThesis))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_RIGHTTHESIS, LT_TI_NULLIDX, line);
+				if (findParm && word[i + 1][0] != LEX_LEFTBRACE && word[i + 2][0] != LEX_LEFTBRACE && !checkBrace(word, i + 1))
+				{
+					_mbscpy(RegionPrefix, pastRegionPrefix);//предыдущую область видимости
+				}
+				findParm = false;
+				LT::Add(lextable, entryLT);
+				continue;
+			}
+			FST::FST fstEqual(word[i], FST_EQUAL);
+			if (FST::execute(fstEqual))
+			{
+				LT::Entry entryLT = writeEntry(entryLT, LEX_EQUAL, LT_TI_NULLIDX, line);
+				LT::Add(lextable, entryLT);
 				continue;
 			}
 			
@@ -384,7 +412,20 @@ namespace Lex {
 		lex.lextable = lextable;
 		return lex;
 	}
+
+	bool checkBrace(unsigned char** word, int k)
+	{
+		while (word[k][0] == IN_CODE_DELIMETR)
+		{
+			k++;
+		}
+		if (word[k][0] == LEX_LEFTBRACE)
+			return 1;
+		else
+			return 0;
+	}
 }
+
 // Постройка вырожений с помощью библиотеки
 //#include <regex>
 //#include <string>
