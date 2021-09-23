@@ -58,5 +58,8 @@ namespace LT
 			if (lextable.table[i].lexema == LEX_ID || lextable.table[i].lexema == LEX_OPERATOR || lextable.table[i].lexema == LEX_LITERAL)
 				fout << "<" << lextable.table[i].idxTI << ">";
 		}
+
+		
+
 	}
 }

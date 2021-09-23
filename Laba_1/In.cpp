@@ -64,7 +64,7 @@ namespace In
 					in.size++;
 					continue;
 				}else
-				if ((in.code[text[in.size - 1]] == in.S) &&  (x == ' '))
+				if (((in.size == 0) || in.code[text[in.size - 1]] == in.S) &&  (x == ' '))
 				{
 					continue;
 				}else

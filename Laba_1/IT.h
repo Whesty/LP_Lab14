@@ -5,6 +5,7 @@
 #define TI_STR_DEFAULT	0x00		// значение по умолчанию для типа string
 #define TI_NULLIDX		0xffffffff	// нет элкмента таблицы идентификаторов
 #define TI_STR_MAXSIZE	255			// 
+#include "Parm.h"
 namespace IT			// таблица идентификаторов
 {
 	enum IDDATATYPE { INT = 1, STR = 2 };			// типы данных идентификаторов: integer, string
@@ -21,7 +22,7 @@ namespace IT			// таблица идентификаторов
 			int vint;					// значение integer
 			struct
 			{
-				unsigned char len;						// количество символов в string
+				int len;						// количество символов в string
 				unsigned char str[TI_STR_MAXSIZE - 1];	// символы string
 			} vstr;				// значение string
 		} value;		// значение идентификатора
@@ -55,4 +56,5 @@ namespace IT			// таблица идентификаторов
 
 	void Delete(IdTable& idtable);	// удалить таблицу лексем (освободить память)
 
+	void showITable(IdTable& table, Parm::PARM parm);	// вывод таблицы лексем
 };

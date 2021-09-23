@@ -10,12 +10,12 @@
 #include <regex>
 #include "Lex.h"
 namespace Lex {
-	unsigned char** separat(In::IN in) {
+	 unsigned char** separat(In::IN in) {
 		int size = 0;
 		int i = 0;
 		int fkov = false;
 		char Simbol[] = { "+-*(){}[]/;|,='" };
-		unsigned char** word = new unsigned char* [maxword];
+		 unsigned char** word = new unsigned char* [maxword];
 		for (int i = 0; i < maxword; i++)
 			word[i] = new unsigned char[maxsize] {NULL};
 		int iworld = 0;
@@ -219,6 +219,7 @@ namespace Lex {
 				}
 				else {// Если это не индентификатор функции 
 					int idx = IT::IsId(idtable, word[i]);// Ищем индентификатор в таблице индентификаторов
+					
 					if (idx != TI_NULLIDX) {
 						LT::Entry entryLT = LT::writeEntry(entryLT, LEX_ID, idx, line);
 						LT::Add(lextable, entryLT);
