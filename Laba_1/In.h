@@ -32,6 +32,7 @@ namespace In
 		int ignor;
 		unsigned char* text;
 		int code[256] = IN_CODE_TABLE;
+		unsigned char** word;
 	};
 	IN getin(wchar_t infile[]);
 }

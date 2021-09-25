@@ -9,110 +9,12 @@
 #define EQUAL '='
 #include <regex>
 #include "Lex.h"
+#include "In.h"
 namespace Lex {
-	 unsigned char** separat(In::IN in) {
-		int size = 0;
-		int i = 0;
-		int fkov = false;
-		char Simbol[] = { "+-*(){}[]/;|,='" };
-		 unsigned char** word = new unsigned char* [maxword];
-		for (int i = 0; i < maxword; i++)
-			word[i] = new unsigned char[maxsize] {NULL};
-		int iworld = 0;
-		while (i < in.size) {
-			bool flag = true;
-			int j = 0;
-			if (in.text[i] == '|') {
-				fkov = false;
-			}
-			if (in.text[i] == Simbol[14]) {
-				fkov = ~fkov;
-				if (!fkov) {
-					word[iworld][size++] = in.text[i];
-					iworld++;
-					size = 0;
-				}
-				else {
-					if (word[iworld][size]>0)
-					iworld++;
-					size = 0;
-					word[iworld][size++] = in.text[i];
-					
-				}
-				i++;
-				//flag = false;
-			}
-			if (fkov && in.text[i] != Simbol[14]) {
-				
-				word[iworld][size++] = in.text[i];
-				i++;
-			}
-			else {
-				//fkov = false;
-				
-				while (j < 14) {
-
-					if (in.text[i] == Simbol[j]) {
-						//cout << in.text[i] << "$1";
-						word[iworld][size++] = in.text[i];
-						iworld++;
-						size = 0;
-						i++;
-						flag = false;
-						//break;
-					}
-					else if (in.text[i + 1] == Simbol[j]) {
-						//cout << in.text[i] << "$2";
-
-						word[iworld][size++] = in.text[i];
-						iworld++;
-						size = 0;
-						i++;
-						flag = false;
-						//break;
-					}
-					j++;
-				}
-				if (in.text[i] == ' ') {
-					//cout << in.text[i] << "$3";
-
-					iworld++;
-					size = 0;
-					i++;
-					flag = false;
-					continue;
-				}/*
-				if (in.text[i] == Simbol[14]) {
-					fkov = true;
-					word[iworld][size++] = in.text[i];
-					iworld++;
-					size = 0;
-					i++;
-					flag = false;
-				}*/
-				if (flag) {
-					word[iworld][size++] = in.text[i];
-					i++;
-				}
-			}
-		}
-		i = 0;
-		word[iworld] = NULL;
-		while (i < iworld)
-		{
-			cout << i << '.' << word[i++] << endl;
-		}
-		return word;
-	}
 	LEX lexAnaliz(Log::LOG log, In::IN in) {
 		LEX lex;
 		LT::LexTable lextable = LT::Create(LT_MAXSIZE);
 		IT::IdTable idtable = IT::Create(TI_MAXSIZE);
-
-		unsigned char** word = new unsigned char* [maxword];
-		for (int i = 0; i < maxword; i++)
-			word[i] = new unsigned char[maxsize] {NULL};
-		word = separat(in);
 
 		int i = 0;
 		int line = 1;
@@ -135,8 +37,8 @@ namespace Lex {
 		char* charCountLit = new char[10]{ "" };
 		unsigned char* nameLiteral = new unsigned char[TI_STR_MAXSIZE] { "" };
 		
-
-		for (i = 0; word[i] != NULL; indexLex++, i++) {
+		unsigned char** word = in.word;
+		for (i = 0; word[i][0] != NULL; indexLex++, i++) {
 			
 		
 			bool findSameID = false;

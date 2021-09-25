@@ -38,7 +38,7 @@ namespace IT {
 		throw ERROR_THROW(110);
 		flog << "№ | Имя | тип данных | тип индитификатора | первое вхождение" << endl;
 		for (int i = 0; i < table.size; i++) {
-			flog << i << " | ";
+			flog << i+1 << " | ";
 			flog << table.table[i].id << " | ";
 			if (table.table[i].idtype == OP) flog << "-"<< " | ";
 			else

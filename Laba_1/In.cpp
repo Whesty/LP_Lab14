@@ -5,15 +5,20 @@
 #include <cwchar>
 #include <iostream>
 #include <fstream>
-
 using namespace std;
 namespace In
 {
+	unsigned char** word;
 	IN getin(wchar_t infile[])
 	{
 		IN in;
 		in.size = 0; in.lines = 0; in.ignor = 0;
 		int col = 0;
+		word = new unsigned char*[1000];
+		for (int i = 0; i < 1000; i++)
+			word[i] = new unsigned char[1000] {NULL};
+		int st = 0;
+		int cl = 0;
 		unsigned char* text = new unsigned char[IN_MAX_LEN_TEXT];
 		unsigned char* textout = new unsigned char[IN_MAX_LEN_TEXT];
 		ifstream fin(infile);
@@ -29,6 +34,7 @@ namespace In
 			if (fin.eof())
 			{
 				text[in.size] = '\0';
+				//word[st][cl] = '\0';
 				in.lines++;
 				break;
 			}
@@ -40,6 +46,7 @@ namespace In
 			if (in.code[x] == in.T)
 			{
 				text[in.size] = x;
+				word[st][cl++] = x;
 				in.size++;
 				col++;
 			}
@@ -55,21 +62,47 @@ namespace In
 				fkov = not(fkov);
 				text[in.size] = x;
 				in.size++;
+				if (fkov == true){
+				if (word[st][0] != NULL) {
+					st++;
+					cl = 0;
+				}
+					word[st][cl++] = x;
+				}
+				else {
+					word[st][cl++] = x;
+					st++;
+					cl = 0;
+				}
 			}
 			else if (in.code[x] == in.S) {
-				if (x == '\n') fkov = false;
 				if (fkov) {
-					//cout << "ms";
 					text[in.size] = x;
+					word[st][cl++] = x;
 					in.size++;
+					col++;
 					continue;
 				}else
 				if (((in.size == 0) || in.code[text[in.size - 1]] == in.S) &&  (x == ' '))
 				{
 					continue;
 				}else
-				if (text[in.size - 1] == ' ') {
-					in.size = in.size - 1;
+				if (text[in.size - 1] == ' ' && x == ' ') {
+					in.size = in.size - 1;	
+				}
+				if (x != ' ') {
+					if (word[st][0] != NULL) {
+						st++;
+						cl = 0;
+					}
+					word[st][cl++] = x;
+					cl = 0;
+				}
+				else {
+					if (word[st][0] != NULL) {
+						st++;
+						cl = 0;
+					}
 				}
 				text[in.size] = x;
 				in.size++;
@@ -77,14 +110,29 @@ namespace In
 			}
 			else
 			{
+				if (x == '\n') fkov = false;
+			if (word[st][0] != NULL) {
+				st++;
+				cl = 0;
+			}
+				word[st][cl++] = in.code[x];
+				st++;
+				cl = 0;
 				text[in.size] = in.code[x];
 				in.size++;
 				col++;
 			}
 			
 		}
+
 		text[in.size] = '\0';
 		in.text = text;
+		int i = 0;
+		while (i < st)
+		{
+			cout << i << '.' << word[i++] << endl;
+		}
+		in.word = word;
 		return in;
 	}
 }
