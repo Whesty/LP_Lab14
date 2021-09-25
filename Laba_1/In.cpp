@@ -30,11 +30,9 @@ namespace In
 			
 			char c; fin.get(c);
 			unsigned char x = c;
-			//cout << " " << c << "(" << (int)x<< ")";
 			if (fin.eof())
 			{
 				text[in.size] = '\0';
-				//word[st][cl] = '\0';
 				in.lines++;
 				break;
 			}
