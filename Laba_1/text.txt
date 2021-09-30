@@ -1,6 +1,6 @@
  integer function fi(integer x, integer y)
-{
-declare integer z;
+{ integer x;
+declare declare integer z;
 z= x*(x+y)(string lp;
 return z;
 };
@@ -22,6 +22,7 @@ declare string sc;
 declare integer strlen(string p);
 x = 1;
 y = 5;
+
 sa = '1234567890';
 sb = '1234567890';
 z = fi(x,y);

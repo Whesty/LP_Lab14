@@ -48,10 +48,10 @@ namespace IT {
 			else flog << "string" << " | ";
 			switch (table.table[i].idtype)
 			{
-			case L: {flog << "Литерал | "; break; }
+			case L: {flog << "Литерал    | "; break; }
 			case V: {flog << "Переманная | "; break; }
-			case P: { flog << "Параметр | "; break; }
-			case F: {flog << "Функция | "; break; }
+			case P: {flog << "Параметр   | "; break; }
+			case F: {flog << "Функция    | "; break; }
 			case OP: {flog << "Оператор | "; break; }
 			default:
 				break;
