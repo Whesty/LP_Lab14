@@ -327,16 +327,3 @@ namespace Lex {
 	}
 	
 }
-
-// Постройка вырожений с помощью библиотеки
-//#include <regex>
-//#include <string>
-//using namespace std;
-//int main()
-//{
-//	string str = "-1.2132434E+99";
-//	cmatch result;
-//	regex regular("([-+][0-9]\.[0-9]*E)([+-][0-9]{2})");
-//	if (regex_match(str.c_str(), result, regular)) cout << "true" << result[1] << " " << result[2];
-//	else cout << "false";
-//}
