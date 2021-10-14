@@ -94,6 +94,7 @@ namespace In
 						cl = 0;
 					}
 					word[st][cl++] = x;
+					st++;
 					cl = 0;
 				}
 				else {
